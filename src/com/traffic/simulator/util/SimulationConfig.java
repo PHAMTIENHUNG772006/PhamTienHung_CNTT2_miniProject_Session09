@@ -1,4 +1,4 @@
 package com.traffic.simulator.util;
 
-public class Logger {
+public class SimulationConfig {
 }

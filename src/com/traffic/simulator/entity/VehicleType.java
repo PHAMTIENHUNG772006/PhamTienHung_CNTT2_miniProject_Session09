@@ -1,4 +1,4 @@
 package com.traffic.simulator.entity;
 
-public class Ambulance {
+public class VehicleType {
 }

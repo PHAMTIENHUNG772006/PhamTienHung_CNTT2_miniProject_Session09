@@ -4,6 +4,7 @@ import com.traffic.simulator.pattern.observer.TrafficObserver;
 import com.traffic.simulator.pattern.observer.TrafficSubject;
 import com.traffic.simulator.pattern.state.GreenState;
 import com.traffic.simulator.pattern.state.TrafficLightState;
+import com.traffic.simulator.util.LogUtil;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -37,15 +38,26 @@ public class TrafficLight implements TrafficSubject, Runnable {
     // ================= State =================
     public void changeState(TrafficLightState newState) {
         this.currentState = newState;
+        LogUtil.log("Changed to " + currentState.getColorName());
         notifyObservers();
     }
 
     public boolean isGreen() {
-
+        return currentState.canVehiclePass();
     }
 
     @Override
     public void run() {
+        while (true) {
+            try {
+                int duration = currentState.getDurationSeconds();
+                Thread.sleep(duration * 1000L);
 
+                currentState.handle(this);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 }

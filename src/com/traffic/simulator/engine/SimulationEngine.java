@@ -21,7 +21,7 @@ public class SimulationEngine {
 
     private volatile boolean isRunning = false;
 
-    private static final int VEHICLE_SPAWN_RATE = 60;
+    private static final int VEHICLE_SPAWN_RATE = 2;
 
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduler;
@@ -51,9 +51,9 @@ public class SimulationEngine {
             try {
                 String id = "VH" + random.nextInt(10000);
 
-                Vehicle vehicle = VehicleFactory.createRandom(id);
+                Vehicle vehicle = VehicleFactory.createRandom(id,intersection);
 
-                LogUtil.log(vehicle.getVehicleType() + " được tạo");
+                LogUtil.log("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " được tạo");
 
                 executorService.submit(() -> processVehicle(vehicle));
 

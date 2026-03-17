@@ -29,20 +29,20 @@ public class Intersection {
     public void enter(Vehicle vehicle)  throws TrafficJamException, CollisionException {
         try {
             if (vehicle instanceof PriorityVehicle) {
-                System.out.println(vehicle + " ( ưu tiên ) đi ngay .");
+                System.out.println("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " ( ưu tiên ) đi ngay .");
                 semaphore.acquireUninterruptibly();
                 return;
             }
 
             if (trafficLight.isGreen()){
                 semaphore.acquire();
-                System.out.println(vehicle + " đi qua ngã tư.");
+                System.out.println("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " đi qua ngã tư.");
             } else {
                 if (waitingQueue.size() >= MAX_QUEUE_SIZE){
                     throw new TrafficJamException("Lên món đặc sản Hà Lội ( Kẹt xe )");
                 }
                 waitingQueue.offer(vehicle);
-                System.out.println(vehicle + " dừng chờ đèn đỏ .");
+                System.out.println("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " dừng chờ đèn đỏ .");
             }
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
@@ -52,7 +52,7 @@ public class Intersection {
 
     public void exit(Vehicle vehicle){
         semaphore.release();
-        System.out.println(vehicle + " đã rời khỏi ngã tư .");
+        System.out.println("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " đã rời khỏi ngã tư .");
     }
 
     public void releaseWaitingVehicles(){
@@ -61,7 +61,7 @@ public class Intersection {
             if (vehicle != null){
                 try {
                     semaphore.acquire();
-                    System.out.println(vehicle + " được phép đi qua .");
+                    System.out.println("[" + vehicle.getId() + "] ["+vehicle.getVehicleType() + "] " + " được phép đi qua .");
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

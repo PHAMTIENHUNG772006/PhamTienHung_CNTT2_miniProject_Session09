@@ -55,7 +55,7 @@ public class TrafficLight implements TrafficSubject, Runnable {
         while (true) {
             try {
                 int duration = currentState.getDurationSeconds();
-                Thread.sleep(duration * 1000L);
+                Thread.sleep(duration);
 
                 currentState.handle(this);
             } catch (InterruptedException e) {

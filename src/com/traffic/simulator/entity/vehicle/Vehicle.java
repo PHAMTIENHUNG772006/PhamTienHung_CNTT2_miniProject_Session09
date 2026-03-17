@@ -1,4 +1,4 @@
 package com.traffic.simulator.entity.vehicle;
 
-public class Vehicle {
+public abstract class Vehicle {
 }

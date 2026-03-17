@@ -1,4 +1,4 @@
 package com.traffic.simulator.pattern.observer;
 
-public class TrafficObserver {
+public interface TrafficObserver {
 }

@@ -10,7 +10,6 @@ public class VehicleFactory {
 
     public static Vehicle createRandom(String id) {
         int chance = random.nextInt(100);
-        // 40% Motorbike, 35% Car, 15% Truck, 10% Ambulance
         if (chance < 40) {
             return new Motorbike(id);
         } else if (chance < 75) {

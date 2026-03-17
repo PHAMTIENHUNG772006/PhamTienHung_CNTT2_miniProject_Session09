@@ -1,7 +1,10 @@
 package com.traffic.simulator.engine;
 
+import com.traffic.simulator.entity.VehicleType;
 import com.traffic.simulator.entity.vehicle.PriorityVehicle;
 import com.traffic.simulator.entity.vehicle.Vehicle;
+import com.traffic.simulator.exception.CollisionException;
+import com.traffic.simulator.exception.TrafficJamException;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,16 +18,54 @@ public class Intersection {
 
     private TrafficLight trafficLight;
 
-    public Intersection(TrafficLight trafficLight, int MAX_QUEUE_SIZE, LinkedBlockingQueue<Vehicle> waitingQueue, Semaphore semaphore) {
+
+    public Intersection(TrafficLight trafficLight, int maxVehicles, int maxQueueSize) {
         this.trafficLight = trafficLight;
-        this.MAX_QUEUE_SIZE = MAX_QUEUE_SIZE;
-        this.waitingQueue = waitingQueue;
-        this.semaphore = semaphore;
+        this.semaphore = new Semaphore(maxVehicles);
+        this.waitingQueue = new LinkedBlockingQueue<>();
+        this.MAX_QUEUE_SIZE = maxQueueSize;
     }
 
-    public void enter(Vehicle vehicle) {
+    public void enter(Vehicle vehicle)  throws TrafficJamException, CollisionException {
+        try {
+            if (vehicle instanceof PriorityVehicle) {
+                System.out.println(vehicle + " ( ưu tiên ) đi ngay .");
+                semaphore.acquireUninterruptibly();
+                return;
+            }
 
+            if (trafficLight.isGreen()){
+                semaphore.acquire();
+                System.out.println(vehicle + " đi qua ngã tư.");
+            } else {
+                if (waitingQueue.size() >= MAX_QUEUE_SIZE){
+                    throw new TrafficJamException("Lên món đặc sản Hà Lội ( Kẹt xe )");
+                }
+                waitingQueue.offer(vehicle);
+                System.out.println(vehicle + " dừng chờ đèn đỏ .");
+            }
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+            throw new CollisionException("Thread bị interrupt → nguy cơ lỗi");
+        }
+    }
 
+    public void exit(Vehicle vehicle){
+        semaphore.release();
+        System.out.println(vehicle + " đã rời khỏi ngã tư .");
+    }
 
+    public void releaseWaitingVehicles(){
+        while(!waitingQueue.isEmpty() && semaphore.availablePermits()>0){
+            Vehicle vehicle = waitingQueue.poll();
+            if (vehicle != null){
+                try {
+                    semaphore.acquire();
+                    System.out.println(vehicle + " được phép đi qua .");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
     }
 }

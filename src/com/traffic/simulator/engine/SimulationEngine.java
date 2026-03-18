@@ -68,11 +68,11 @@ public class SimulationEngine {
         try {
             vehicle.run();
 
+
             monitor.recordVehiclePassed(vehicle);
         } catch (TrafficJamException e) {
             monitor.recordJam();
             LogUtil.log("Rào chắn: " + e.getMessage());
-
         } catch (CollisionException e) {
             LogUtil.log("Tai nạn: " + e.getMessage());
 
